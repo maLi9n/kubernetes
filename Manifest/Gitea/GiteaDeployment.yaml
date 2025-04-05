@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitea
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitea
+  namespace: gitea
+  annotations:
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+spec:
+  type: ExternalName
+  externalName: 192.168.40.11
+  selector:
+    app.kubernetes.io/instance: traefik
+    app.kubernetes.io/name: traefik
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gitea
+  namespace: gitea
+  annotations: 
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`www.git.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: gitea
+          port: 3000
+    - match: Host(`git.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: gitea
+          port: 3000
+      middlewares:
+        - name: default-headers
+          namespace: traefik
+        - name: rate-limit
+          namespace: traefik
+  tls:
+    secretName: cybertronlabs-tls # change to your cert name

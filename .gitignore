@@ -1,0 +1,3 @@
+./Helm/Traefik/Dashboard/secret-dashboard.yaml
+./Helm/Traefik/Cert-Manager/Issuers/secret-cf-token.yaml
+./Helm/Authentik/values.yaml

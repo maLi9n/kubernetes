@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: immich
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich
+  namespace: immich
+  annotations:
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+spec:
+  type: ExternalName
+  externalName: 192.168.40.8
+  selector:
+    app.kubernetes.io/instance: traefik
+    app.kubernetes.io/name: traefik
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich
+  namespace: immich
+  annotations: 
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`www.immich.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: immich
+          port: 2283
+    - match: Host(`immich.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: immich
+          port: 2283
+      middlewares:
+        - name: default-headers
+          namespace: traefik
+        - name: rate-limit
+          namespace: traefik
+  tls:
+    secretName: cybertronlabs-tls # change to your cert name

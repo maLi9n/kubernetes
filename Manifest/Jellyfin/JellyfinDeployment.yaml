@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jellyfin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jellyfin
+    app.kubernetes.io/instance: jellyfin
+    app.kubernetes.io/name: jellyfin
+  name: jellyfin
+  namespace: jellyfin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      nodeSelector:
+        worker: "true"
+      containers:
+      - env:
+        - name: TZ
+          value: "America/Chicago"
+        image: linuxserver/jellyfin
+        imagePullPolicy: IfNotPresent
+        name: jellyfin
+        ports:
+        - containerPort: 8096
+          name: web
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /config
+          name: jellyfin
+          subPath: config
+        - mountPath: /cache
+          name: jellyfin
+          subPath: cache
+        - mountPath: "/Movies"
+          readOnly: false
+          name: smb
+          subPath: Movies
+        - mountPath: "/Shows"
+          readOnly: false
+          name: smb
+          subPath: Shows
+        - mountPath: "/Music"
+          readOnly: false
+          name: smb
+          subPath: Music
+      volumes:
+        - name: jellyfin
+          persistentVolumeClaim:
+            claimName: jellyfin
+        - name: smb
+          persistentVolumeClaim:
+            claimName: pvc-jellyfin-smb
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: jellyfin
+  name: jellyfin
+  namespace: jellyfin
+spec:
+  ports:
+  - name: web-tcp
+    port: 8096
+    protocol: TCP
+    targetPort: 8096
+  - name: web-udp
+    port: 8096
+    protocol: UDP
+    targetPort: 8096
+  selector:
+    app: jellyfin
+  externalTrafficPolicy: Local
+  loadBalancerIP: 192.168.40.62
+  type: LoadBalancer

@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: docuseal
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docuseal
+  namespace: docuseal
+  annotations:
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+spec:
+  type: ExternalName
+  externalName: 192.168.40.7
+  selector:
+    app.kubernetes.io/instance: traefik
+    app.kubernetes.io/name: traefik
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: docuseal
+  namespace: docuseal
+  annotations: 
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`www.doc.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: docuseal
+          port: 3001
+    - match: Host(`doc.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: docuseal
+          port: 3001
+      middlewares:
+        - name: default-headers
+          namespace: traefik
+        - name: rate-limit
+          namespace: traefik
+        - name: authentik-outpost
+          namespace: traefik
+  tls:
+    secretName: cybertronlabs-tls # change to your cert name

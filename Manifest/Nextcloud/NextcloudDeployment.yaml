@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nextcloud
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+  annotations:
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+spec:
+  type: ExternalName
+  externalName: 192.168.40.7
+  selector:
+    app.kubernetes.io/instance: traefik
+    app.kubernetes.io/name: traefik
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+  annotations: 
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`www.nc.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: nextcloud
+          port: 8088
+    - match: Host(`nc.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: nextcloud
+          port: 8088
+      middlewares:
+        - name: default-headers
+          namespace: traefik
+        - name: rate-limit
+          namespace: traefik
+  tls:
+    secretName: cybertronlabs-tls # change to your cert name

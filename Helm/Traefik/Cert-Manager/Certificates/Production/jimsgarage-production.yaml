@@ -1,0 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cybertronlabs # change to your domain
+  namespace: traefik # add to traefik namespace so it can use it (you DO NOT need it in each app namespace!!!)
+spec:
+  secretName: cybertronlabs-tls # change to your secretname
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: "*.cybertronlabs.us" # change to your domain
+  dnsNames:
+  - "*.cybertronlabs.us" # change to your domain
+  - cybertronlabs.us # change to your domain
