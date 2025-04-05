@@ -36,6 +36,11 @@ spec:
       services:
         - name: homepage
           port: 3000
+      middlewares:
+        - name: default-headers
+          namespace: traefik
+        - name: authentik-outpost
+          namespace: traefik
     - match: Host(`homepage.cybertronlabs.us`)
       kind: Rule
       services:
