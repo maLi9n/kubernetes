@@ -1,0 +1,26 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: authentik-service
+  namespace: default
+  annotations: 
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`www.auth.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: authentik-service
+          port: 9000
+    - match: Host(`auth.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: authentik-service
+          port: 9000
+      middlewares:
+        - name: default-headers
+  tls:
+    secretName: cybertronlabs-tls # change to your cert name
