@@ -17,7 +17,6 @@ spec:
   selector:
     app.kubernetes.io/instance: traefik
     app.kubernetes.io/name: traefik
-    secretName: cybertronlabs-tls # Replace with your actual TLS secret name
 
 ---
 apiVersion: traefik.io/v1alpha1

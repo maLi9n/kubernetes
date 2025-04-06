@@ -1,8 +1,8 @@
----
 apiVersion: v1
 kind: Namespace
 metadata:
   name: immich
+
 ---
 apiVersion: v1
 kind: Service
@@ -17,13 +17,14 @@ spec:
   selector:
     app.kubernetes.io/instance: traefik
     app.kubernetes.io/name: traefik
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: immich
   namespace: immich
-  annotations: 
+  annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
   entryPoints:
