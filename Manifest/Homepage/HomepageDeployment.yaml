@@ -37,9 +37,9 @@ spec:
           port: 3000
       middlewares:
         - name: default-headers
-          namespace: traefik
+          namespace: homepage
         - name: authentik-outpost
-          namespace: traefik
+          namespace: homepage
     - match: Host(`homepage.cybertronlabs.us`)
       kind: Rule
       services:
@@ -47,9 +47,9 @@ spec:
           port: 3000
       middlewares:
         - name: default-headers
-          namespace: traefik
+          namespace: homepage
         - name: authentik-outpost
-          namespace: traefik
+          namespace: homepage
   tls:
     secretName: cybertronlabs-tls # change to your cert name
 
