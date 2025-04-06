@@ -7,7 +7,7 @@ spec:
   selector:
     app: authentik
   externalTrafficPolicy: Local
-  loadBalancerIP: 192.168.40.63
+  loadBalancerIP: 192.168.40.69
   type: LoadBalancer
   ports:
     - name: http
