@@ -115,12 +115,6 @@ kubectl apply -f ~/Helm/Traefik/Cert-Manager/Issuers/secret-cf-token.yaml
 kubectl apply -f ~/Helm/Traefik/Cert-Manager/Issuers/letsencrypt-production.yaml
 
 # Step 13: Apply production certificate
-kubectl apply -f ~/Helm/Traefik/Cert-Manager/Certificates/Production/jimsgarage-production.yaml
+kubectl apply -f ~/Helm/Traefik/Cert-Manager/Certificates/Production/cybertronlabs-production.yaml
 
-# Step 14: Create PiHole namespace
-kubectl create namespace pihole
-
-# Step 15: Deploy PiHole
-kubectl apply -f ~/Manifest/PiHole
-
-echo -e " \033[32;5mScript finished. Be sure to create PVC for PiHole in Longhorn UI\033[0m"
+echo -e " \033[32;5mScript finished! Happy Kubeing!!!\033[0m"

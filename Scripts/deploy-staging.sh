@@ -115,7 +115,7 @@ kubectl apply -f ~/Helm/Traefik/Cert-Manager/Issuers/secret-cf-token.yaml
 kubectl apply -f ~/Helm/Traefik/Cert-Manager/Issuers/letsencrypt-staging.yaml
 
 # Step 13: Apply staging certificate
-kubectl apply -f ~/Helm/Traefik/Cert-Manager/Certificates/Production/jimsgarage-staging.yaml
+kubectl apply -f ~/Helm/Traefik/Cert-Manager/Certificates/Production/cybertronlabs-staging.yaml
 
 # Step 14: Create PiHole namespace
 kubectl create namespace pihole
