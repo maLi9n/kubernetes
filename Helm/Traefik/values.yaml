@@ -14,7 +14,7 @@ deployment:
   additionalContainers: []
   initContainers: []
 
-nodeSelector: 
+nodeSelector:
   worker: "true" # add these labels to your worker nodes before running - see video
 
 ports:
@@ -23,7 +23,7 @@ ports:
   websecure:
     tls:
       enabled: true
-      
+
 ingressRoute:
   dashboard:
     enabled: false
@@ -49,6 +49,6 @@ service:
   annotations: {}
   labels: {}
   spec:
-    loadBalancerIP: 192.168.40.65 # this should be an IP in the Kube-VIP range
+    loadBalancerIP: 192.168.40.60 # this should be an IP in the Kube-VIP range
   loadBalancerSourceRanges: []
   externalIPs: []
