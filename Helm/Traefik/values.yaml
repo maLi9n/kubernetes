@@ -19,8 +19,10 @@ nodeSelector:
 
 ports:
   web:
-    redirectTo:
-      port: websecure
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
   websecure:
     tls:
       enabled: true
