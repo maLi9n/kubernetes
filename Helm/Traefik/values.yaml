@@ -1,13 +1,11 @@
 globalArguments:
   - "--global.sendanonymoususage=false"
-  - "--global.checknewversion=false"
+  - "--global.checknewversion=true"
 
 additionalArguments:
   - "--serversTransport.insecureSkipVerify=true"
   - "--log.level=INFO"
   - "--log.format=json"
-  - "--experimental.plugins.bouncer.moduleName=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
-  - "--experimental.plugins.bouncer.version=v1.4.2"
   - "--entrypoints.web.http.middlewares=traefik-bouncer@kubernetescrd"
   - "--entrypoints.websecure.http.middlewares=traefik-bouncer@kubernetescrd"
   - "--providers.kubernetescrd"
@@ -66,8 +64,9 @@ service:
 experimental:
   plugins:
     bouncer:
+      enabled: true
       moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
-      version: v1.4.2 # Or the specific version you are using
+      version: v1.4.0 # Or the specific version you are using
 
 log:
   access:
