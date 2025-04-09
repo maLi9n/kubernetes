@@ -5,6 +5,9 @@ globalArguments:
 additionalArguments:
   - "--serversTransport.insecureSkipVerify=true"
   - "--log.level=INFO"
+  - "--log.format=json"
+  - "--experimental.plugins.bouncer.moduleName=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+  - "--experimental.plugins.bouncer.version=v1.4.2"
   - "--entrypoints.web.http.middlewares=traefik-bouncer@kubernetescrd"
   - "--entrypoints.websecure.http.middlewares=traefik-bouncer@kubernetescrd"
   - "--providers.kubernetescrd"
@@ -67,13 +70,9 @@ experimental:
       version: v1.4.2 # Or the specific version you are using
 
 log:
-  general:
-    level: DEBUG
   access:
     enabled: true
-    fields:
-      headers:
-        defaultmode: keep
+    format: json
 
 volumes:
   - name: crowdsec-bouncer-tls
