@@ -6,8 +6,6 @@ additionalArguments:
   - "--serversTransport.insecureSkipVerify=true"
   - "--log.level=INFO"
   - "--log.format=json"
-  - "--entrypoints.web.http.middlewares=traefik-bouncer@kubernetescrd"
-  - "--entrypoints.websecure.http.middlewares=traefik-bouncer@kubernetescrd"
   - "--providers.kubernetescrd"
 
 deployment:
@@ -61,22 +59,10 @@ service:
   loadBalancerSourceRanges: []
   externalIPs: []
 
-experimental:
-  plugins:
-    bouncer:
-      enabled: true
-      moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
-      version: v1.4.0 # Or the specific version you are using
-
 log:
   access:
     enabled: true
     format: json
-
-volumes:
-  - name: crowdsec-bouncer-tls
-    mountPath: /etc/traefik/crowdsec-certs
-    type: secret
 
 image:
   pullPolicy: Always
