@@ -11,8 +11,8 @@ data:
     mode: cluster
   settings.yaml: |
     providers:
-    openweathermap: 83643f2938671885f6032f74dda939c1
-    weatherapi: 83643f2938671885f6032f74dda939c1
+    openweathermap: "{{HOMEPAGE_VAR_WEATHER_API}}" # not required if using username / password 
+    weatherapi: "{{HOMEPAGE_VAR_WEATHER_API}}" # not required if using username / password 
     title: Cybertron Labs
     background:
       image: https://images.unsplash.com/photo-1629056948919-2ff26272117e?auto=format&fit=crop&w=2560&q=80
