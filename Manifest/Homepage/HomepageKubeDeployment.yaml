@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -10,6 +11,7 @@ metadata:
   labels:
     app: homepage
     app.kubernetes.io/instance: homepage
+    app.kubernetes.io/name: homepage
   name: homepage
   namespace: homepage
 spec:

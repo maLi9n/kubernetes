@@ -1,0 +1,348 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  kubernetes.yaml: |
+    mode: cluster
+  settings.yaml: |
+    providers:
+    openweathermap: 83643f2938671885f6032f74dda939c1
+    weatherapi: 83643f2938671885f6032f74dda939c1
+    title: Cybertron Labs
+    background:
+      image: https://images.unsplash.com/photo-1629056948919-2ff26272117e?auto=format&fit=crop&w=2560&q=80
+      blur: sm # sm, "", md, xl... see https://tailwindcss.com/docs/backdrop-blur
+      saturate: 50 # 0, 50, 100... see https://tailwindcss.com/docs/backdrop-saturate
+      brightness: 80 # 0, 50, 75... see https://tailwindcss.com/docs/backdrop-brightness
+      opacity: 50 # 0-100
+    theme: dark
+    color: slate
+    statusStyle: "basic"
+    layout:
+      Media:
+        style: row
+        columns: 4
+      Arr:
+        style: row
+        columns: 3
+      Network:
+        style: row
+        columns: 4
+  custom.css: ""
+  custom.js: ""
+  bookmarks.yaml: |
+    - Developer:
+    - Github:
+        - icon: github.png
+          href: https://github.com/
+    - Social:
+    - Reddit:
+        - icon: reddit.png
+          href: https://reddit.com/
+    - Discord:
+        - icon: discord.png
+          href: https://discord.com/channels/@me/
+    - Discourse:
+        - icon: discourse.png
+          href: https://discourse.nixos.org/
+    - Slack:
+        - icon: slack.png
+          href: https://slack.com/
+    - Entertainment:
+    - YouTube:
+        - icon: youtube.png
+          href: https://youtube.com/
+    - Netflix:
+        - icon: netflix.png
+          href: https://www.netflix.com/
+    - Disney+:
+        - icon: disney-plus.png
+          href: https://wwwm.disneyplus.com/
+    - Hulu:
+        - icon: https://upload.wikimedia.org/wikipedia/commons/2/20/Hulu_2019.svg
+          href: https://www.hulu.com/
+    - Spotify:
+        - icon: spotify.png
+          href: https://www.spotify.com/
+    - AI:
+    - Ollama:
+        - icon: open-webui.png
+          href: https://chat.cybertronlabs.us/
+    - ChatGPT:
+        - icon: chatgpt.png
+          href: https://chat.openai.com/chat/
+    - Developer:
+        - Github:
+            - abbr: GH
+              href: https://github.com/
+  services.yaml: |
+    - Server Management:
+    - TrueNAS:
+        icon: truenas.png
+        href: https://truenas.cybertronlabs.us
+        description: Swiss Army Knife file sever
+        siteMonitor: https://truenas.cybertronlabs.us
+        widget:
+          type: truenas
+          url: https://192.168.0.4
+          username: user # not required if using api key
+          password: pass # not required if using api key
+          key: "{{HOMEPAGE_VAR_TRUENAS_API}}" # not required if using username / password
+          enablePools: true # optional, defaults to false
+          nasType: core # defaults to scale, must be set to 'core' if using enablePools with TrueNAS Core
+    - Proxmox:
+        icon: proxmox.png
+        href: https://pvd.cybertronlabs.us:8006
+        description: Proxmox management console
+        siteMonitor: https://192.168.40.6:8006
+        widget:
+          type: proxmox
+          url: https://192.168.40.6:8006
+          username: api@pam!homepage
+          password: "{{HOMEPAGE_VAR_PROMETHEUS_API}}"
+          #node: pvd
+    - Supermicro:
+        icon: si-supermicro-#ED2F21
+        href: https://supermicro.cybertronlabs.us
+        description: IPMI Management for VM server
+        siteMonitor: http://192.168.0.191
+    - File Management:
+    - Sabnzbd:
+        icon: sabnzbd.png
+        href: https://sabnzbd.cybertronlabs.us
+        description: NZB file management
+        ping: https://sabnzbd.cybertronlabs.us
+        widget:
+          type: sabnzbd
+          url: http://192.168.40.9:8080
+          key: "{{HOMEPAGE_VAR_SAB_API}}"
+    - Gitea:
+        icon: gitea.png
+        href: https://git.cybertronlabs.us
+        description: Local Git Repository
+        siteMonitor: https://git.cybertronlabs.us
+        widget:
+          type: gitea
+          url: http://192.168.40.11:3000
+          key: "{{HOMEPAGE_VAR_GITEA_API}}"
+    - Nextcloud:
+        icon: nextcloud.png
+        href: https://nc.cybertronlabs.us
+        siteMonitor: https://nc.cybertronlabs.us
+        description: Cloud storage at home
+        widget:
+          type: nextcloud
+          url: https://nc.cybertronlabs.us
+          key: "{{HOMEPAGE_VAR_NC_API}}"
+          username: # "{{HOMEPAGE_VAR_NC_USER}}"
+          password: # "{{HOMEPAGE_VAR_NC_PW}}"
+    - Syncthing:
+        icon: syncthing.png
+        href: http://192.168.40.17
+        ping: http://192.168.40.17
+        description: Synchronize files between hosts
+    - Network:
+    - Traefik:
+        icon: traefik.png
+        href: https://traefik.cybertronlabs.us
+        description: Traefik reverse proxy
+        siteMonitor: https://traefik.cybertronlabs.us
+    - Portainer:
+        icon: portainer.png
+        href: https://portainer.cybertronlabs.us
+        description: Docker container management
+        siteMonitor: https://portainer.cybertronlabs.us
+        widget:
+          type: portainer
+          url: http://192.168.40.9:9000
+          env: 1
+          key: "{{HOMEPAGE_VAR_PORTAINER_API}}"
+    - Pi-Hole 1:
+        icon: pi-hole.png
+        href: https://pihole1.cybertronlabs.us/admin
+        description: Open Source Ad Blocker
+        siteMonitor: https://pihole1.cybertronlabs.us
+        widget:
+          type: pihole
+          version: 6
+          url: https://192.168.0.81
+          key: "{{HOMEPAGE_VAR_PIHOLE_PASS}}"
+    - Pi-Hole 2:
+        icon: pi-hole.png
+        href: https://pihole2.cybertronlabs.us/admin
+        description: Open Source Ad Blocker
+        siteMonitor: https://pihole2.cybertronlabs.us
+        widget:
+          type: pihole
+          version: 6
+          url: https://192.168.0.82
+          key: "{{HOMEPAGE_VAR_PIHOLE_PASS}}"
+    - Security:
+    - Vault:
+        icon: si-vault-#FFEC6E
+        href: https://vault.cybertronlabs.us
+        description: Manage Secrets and protect sensitive data
+        siteMonitor: https://192.168.40.12:8200
+    - Arkime:
+        icon: https://arkime.com/assets/Arkime_Logo_Mark_White@3x.png
+        href: https://arkime.cybertronlabs.us:8005
+        description: Network Analysis Tool
+        siteMonitor: https://192.168.40.14:8005
+    - Security Onion:
+        icon: https://yt3.googleusercontent.com/ytc/AIdro_l7FoNfGEY8Jka1mHJmwnyU6qWJBRR6eA2DW5fux60j_Bw=s900-c-k-c0x00ffffff-no-rj
+        href: https://soc.cybertronlabs.us
+        description: All-in-one SEIM solution
+        siteMonitor: https://192.168.40.13:443
+    - Arr:
+    - Sonarr:
+        icon: sonarr.png
+        href: http://sonarr.cybertronlabs.us
+        description: Series management
+        ping: http://sonarr.cybertronlabs.us
+        widget:
+          type: sonarr
+          url: http://192.168.40.9:8989
+          key: "{{HOMEPAGE_VAR_SONARR_API}}"
+    - Radarr:
+        icon: radarr.png
+        href: http://radarr.cybertronlabs.us
+        description: Movies management
+        ping: http://radarr.cybertronlabs.us
+        widget:
+          type: radarr
+          url: http://192.168.40.9:7878
+          key: "{{HOMEPAGE_VAR_RADARR_API}}"
+    - Lidarr:
+        icon: lidarr.png
+        href: http://lidarr.cybertronlabs.us
+        description: Music management
+        ping: http://lidarr.cybertronlabs.us
+        widget:
+          type: lidarr
+          url: http://192.168.40.9:8686
+          key: "{{HOMEPAGE_VAR_LIDARR_API}}"
+    - Media:
+    - Jellyfin:
+        icon: jellyfin.png
+        href: https://jellyfin.cybertronlabs.us
+        description: A media player
+        siteMonitor: https://jellyfin.cybertronlabs.us
+        widget:
+          type: jellyfin
+          url: https://jellyfin.cybertronlabs.us
+          key: "{{HOMEPAGE_VAR_JELLYFIN_API}}"
+          enableBlocks: true # optional, defaults to false
+          enableNowPlaying: true # optional, defaults to true
+          enableUser: true # optional, defaults to false
+          showEpisodeNumber: true # optional, defaults to false
+          expandOneStreamToTwoRows: false # optional, defaults to true
+    - Jellyfin 2:
+       icon: jellyfin.png
+       href: https://jelly.cybertronlabs.us
+       description: A media player with hardware transcoding capability
+       ping: https://192.168.40.47:8096
+       widget:
+         type: jellyfin
+         url: http://192.168.40.47:8096
+         key: "{{HOMEPAGE_VAR_JELLYFIN2_API}}"
+         enableBlocks: true # optional, defaults to false
+         enableNowPlaying: true # optional, defaults to true
+         enableUser: true # optional, defaults to false
+         showEpisodeNumber: true # optional, defaults to false
+         expandOneStreamToTwoRows: false # optional, defaults to true
+    - Plex:
+        icon: plex.png
+        href: http://plex.cybertronlabs.us
+        description: Another media player
+        ping: http://plex.cybertronlabs.us
+        widget:
+          type: plex
+          url: http://192.168.40.172:32400
+          key: "{{HOMEPAGE_VAR_PLEX_API}}" # see https://www.plexopedia.com/plex-media-server/general/plex-token/
+    - Immich:
+        icon: immich.png
+        href: https://immich.cybertronlabs.us
+        description: A place to manage all your photos
+        siteMonitor: https://immich.cybertronlabs.us
+        widget:
+          type: immich
+          url: https://immich.cybertronlabs.us
+          key: "{{HOMEPAGE_VAR_IMMICH_API}}"
+          version: 2
+    - Monitoring:
+    - Grafana:
+        icon: grafana.png
+        href: https://grafana.cybertronlabs.us
+        description: Easily collect, correlate, and visualize data with beautiful dashboards using Grafana
+        siteMonitor: https://grafana.cybertronlabs.us
+        widget:
+          type: grafana
+          url: http://192.168.40.8:3000
+          username: "{{HOMEPAGE_VAR_GRAFANA_USER}}"
+          password: "{{HOMEPAGE_VAR_GRAFANA_PASS}}"
+    - Uptime-Kuma:
+        icon: uptime-kuma.png
+        href: https://kuma.cybertronlabs.us/dashboard
+        description: A little bear is watching your website.🐻🐻🐻
+        siteMonitor: https://kuma.cybertronlabs.us
+        widget:
+          type: uptimekuma
+          url: http://192.168.40.8:32768
+          slug: homelab
+    - Prometheus 1:
+        icon: prometheus.png
+        href: http://192.168.40.8:9090
+        description: Information and metrics gathering
+        siteMonitor: http://192.168.40.8:9090
+        widget:
+          type: prometheus
+          url: http://192.168.40.8:9090
+    - Prometheus 2:
+        icon: prometheus.png
+        href: http://192.168.40.7:9090
+        description: Information and metrics gathering
+        siteMonitor: http://192.168.40.7:9090
+        widget:
+          type: prometheus
+          url: http://192.168.40.7:9090
+  widgets.yaml: |
+    - resources:
+        cpu: true
+        memory: true
+        disk: /
+    - search:
+        provider: google
+        target: _blank
+    - weatherapi:
+        label: San Antonio # optional
+        latitude: 29.42
+        longitude: -98.49
+        units: imperial # or metric
+        apiKey: c2ce02800d6a4d37a4d195424243005
+        cache: 5 # Time in minutes to cache API responses, to stay within limits
+        format: # optional, Intl.NumberFormat options
+          maximumFractionDigits: 1
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+    - resources:
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+        network: default
+  docker.yaml: ""
