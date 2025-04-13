@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fail2ban
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: fail2ban
+  template:
+    metadata:
+      labels:
+        app: fail2ban
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-2
+      containers:
+        - name: fail2ban
+          image: crazymax/fail2ban:latest
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: config
+              mountPath: /etc/fail2ban/filter.d/jellyfin.conf
+              subPath: jellyfin.conf
+            - name: config
+              mountPath: /etc/fail2ban/jail.d/jail.local
+              subPath: jail.local
+            - name: config
+              mountPath: /etc/fail2ban/action.d/gotify.conf
+              subPath: gotify.conf
+            - name: jellyfin-logs
+              mountPath: /jellyfin/config
+      volumes:
+        - name: config
+          configMap:
+            name: fail2ban-config
+        - name: jellyfin-logs
+          hostPath:
+            path: /var/lib/kubelet/pods/99771b08-5367-4bb7-8d16-95f5f2149816/volumes/kubernetes.io~csi/jellyfin/mount/config
+            type: Directory

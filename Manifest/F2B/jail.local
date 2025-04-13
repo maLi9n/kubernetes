@@ -1,0 +1,11 @@
+[jellyfin]
+enabled = true
+filter = jellyfin
+backend = polling
+logpath = /jellyfin/config/log/*.log
+maxretry = 5
+findtime = 600
+bantime = 3600
+banaction = ipset
+action = %(action_mwl)s
+         gotify
