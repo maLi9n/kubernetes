@@ -90,10 +90,12 @@ spec:
         - name: homepage
           port: 3000
       middlewares:
+        - name: bouncer
+          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: authentik-outpost
           namespace: traefik
-  tls:
-    secretName: cybertronlabs-tls # change to your cert name
+#  tls:
+#    secretName: cybertronlabs-tls # change to your cert name
 

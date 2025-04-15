@@ -23,7 +23,7 @@ kind: IngressRoute
 metadata:
   name: kuma
   namespace: kuma
-  annotations: 
+  annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
   entryPoints:
@@ -40,11 +40,13 @@ spec:
         - name: kuma
           port: 32768
       middlewares:
+        - name: bouncer
+          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: authentik-outpost
           namespace: traefik
         - name: rate-limit
           namespace: traefik
-  tls:
-    secretName: cybertronlabs-tls # change to your cert name
+#  tls:
+#    secretName: cybertronlabs-tls # change to your cert name

@@ -4,7 +4,7 @@ kind: IngressRoute
 metadata:
   name: jellyfin
   namespace: jellyfin
-  annotations: 
+  annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
   entryPoints:
@@ -21,9 +21,11 @@ spec:
         - name: jellyfin
           port: 8096
       middlewares:
+        - name: bouncer
+          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit
           namespace: traefik
-  tls:
-    secretName: cybertronlabs-tls # change to your cert name
+#  tls:
+#    secretName: cybertronlabs-tls # change to your cert name

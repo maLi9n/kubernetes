@@ -66,10 +66,11 @@ spec:
         - name: gotify
           port: 80
       middlewares:
+        - name: bouncer
+          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit
           namespace: traefik
-  tls:
-    secretName: cybertronlabs-tls # change to your cert name
-
+#  tls:
+#    secretName: cybertronlabs-tls # change to your cert name

@@ -23,7 +23,7 @@ kind: IngressRoute
 metadata:
   name: mattermost
   namespace: mattermost
-  annotations: 
+  annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
   entryPoints:
@@ -40,9 +40,11 @@ spec:
         - name: mattermost
           port: 8065
       middlewares:
+        - name: bouncer
+          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit
           namespace: traefik
-  tls:
-    secretName: cybertronlabs-tls # change to your cert name
+#  tls:
+#    secretName: cybertronlabs-tls # change to your cert name

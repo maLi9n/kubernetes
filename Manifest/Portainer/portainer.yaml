@@ -173,19 +173,21 @@ spec:
         - name: portainer
           port: 9000
       middlewares:
+        - name: bouncer
+          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit
           namespace: traefik
-  tls:
-    secretName: cybertronlabs-tls # change to your cert name
+#  tls:
+#    secretName: cybertronlabs-tls # change to your cert name
 
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: rate-limit
-  namespace: portainer
+  namespace: traefik
 spec:
   rateLimit:
     average: 100

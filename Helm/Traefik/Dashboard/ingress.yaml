@@ -3,7 +3,7 @@ kind: IngressRoute
 metadata:
   name: traefik-dashboard
   namespace: traefik
-  annotations: 
+  annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
   entryPoints:
@@ -12,9 +12,11 @@ spec:
     - match: Host(`traefik.cybertronlabs.us`) # change this to your domain
       kind: Rule
       middlewares:
-        - name: authentik-outpost
+        - name: bouncer
+        - name: default-headers
+        #- name: authentik-outpost
         - name: rate-limit
-        #- name: traefik-dashboard-basicauth
+          #- name: traefik-dashboard-basicauth
           namespace: traefik
       services:
         - name: api@internal

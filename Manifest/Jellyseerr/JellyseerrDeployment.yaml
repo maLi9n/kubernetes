@@ -41,11 +41,12 @@ spec:
         - name: jellyseerr
           port: 5055
       middlewares:
-        - name: default-headers
+        - name: bouncer
           namespace: traefik
         #       - name: authentik-outpost
-        #         namespace: traefik
+        - name: default-headers
+          namespace: traefik
         - name: rate-limit
           namespace: traefik
-  tls:
-    secretName: cybertronlabs-tls # change to your cert name
+#  tls:
+#    secretName: cybertronlabs-tls # change to your cert name
