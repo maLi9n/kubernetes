@@ -1,0 +1,260 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: media
+---
+# SMB PersistentVolumes
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: smb.csi.k8s.io
+  name: pv-arr-media
+spec:
+  capacity:
+    storage: 10000Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: smb
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+  csi:
+    driver: smb.csi.k8s.io
+    readOnly: false
+    # volumeHandle format: {smb-server-address}#{sub-dir-name}#{share-name}
+    # make sure this value is unique for every share in the cluster
+    volumeHandle: arr
+    volumeAttributes:
+      source: "//192.168.40.4/media" # Change this to your SMB IP and share name
+    nodeStageSecretRef:
+      name: smbcreds
+      namespace: default
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: smb.csi.k8s.io
+  name: pv-arr-temp
+spec:
+  capacity:
+    storage: 10000Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: smb
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+  csi:
+    driver: smb.csi.k8s.io
+    readOnly: false
+    # volumeHandle format: {smb-server-address}#{sub-dir-name}#{share-name}
+    # make sure this value is unique for every share in the cluster
+    volumeHandle: arr
+    volumeAttributes:
+      source: "//192.168.40.4/temp" # Change this to your SMB IP and share name
+    nodeStageSecretRef:
+      name: smbcreds
+      namespace: default
+---
+# SMB PVCs
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-arr-media
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: pv-arr-media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-arr-temp
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: pv-arr-temp
+---
+# Config PVCs
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: radarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sonarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lidarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# ConfigMap for shared env
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: media-env
+  namespace: media
+data:
+  TZ: America/New_York
+  PUID: "1000"
+  PGID: "1000"
+---
+# Deployments, Services, Ingresses
+# -- Radarr --
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: radarr
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: radarr
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      nodeSelector:
+        worker: "true"
+      containers:
+        - name: radarr
+          image: lscr.io/linuxserver/radarr:latest
+          ports:
+            - containerPort: 7878
+          envFrom:
+            - configMapRef:
+                name: media-env
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /downloads
+              name: smb-temp
+            - mountPath: /movies
+              name: smb-media
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 7878
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 7878
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: radarr-config
+        - name: pv-arr-temp
+          persistentVolumeClaim:
+            claimName: pv-arr-temp
+        - name: pv-arr-media
+          persistentVolumeClaim:
+            claimName: pv-arr-media
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: radarr
+  namespace: media
+spec:
+  selector:
+    app: radarr
+  ports:
+    - port: 7878
+      targetPort: 7878
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: radarr
+  namespace: radarr
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`www.radarr.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: radarr
+          port: 7878
+    - match: Host(`radarr.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: radarr
+          port: 7878
+      middlewares:
+        - name: bouncer
+          namespace: traefik
+        - name: default-headers
+          namespace: traefik
+        - name: rate-limit
+          namespace: traefik
+#  tls:
+#    secretName: cybertronlabs-tls # change to your cert name
+
+---
+# Repeat for Sonarr, Lidarr, SABnzbd as needed, updating mount paths & ports accordingly.
