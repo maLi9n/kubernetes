@@ -18,19 +18,26 @@ spec:
         worker: "true"
       containers:
         - name: sonarr
-          image: lscr.io/linuxserver/sonarr:latest
+          image: linuxserver/sonarr
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8989
+              name: web
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: media-env
           volumeMounts:
             - mountPath: /config
               name: config
-            - mountPath: /downloads
+            - mountPath: "/shows"
+              readOnly: false
               name: smb-temp
-            - mountPath: /tv
+              subPath: shows
+            - mountPath: "/Shows"
+              readOnly: false
               name: smb-media
+              subPath: Shows
           readinessProbe:
             httpGet:
               path: /
@@ -54,23 +61,27 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: sonarr-config
-        - name: pv-arr-temp
+        - name: smb-temp
           persistentVolumeClaim:
-            claimName: pv-arr-temp
-        - name: pv-arr-media
+            claimName: pvc-arr-temp
+        - name: smb-media
           persistentVolumeClaim:
-            claimName: pv-arr-media
+            claimName: pvc-arr-media
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
+    app: sonarr
   name: sonarr
   namespace: media
 spec:
   selector:
     app: sonarr
   ports:
-    - port: 8989
+    - name: web-tcp
+      port: 8989
+      protocol: TCP
       targetPort: 8989
 ---
 apiVersion: traefik.io/v1alpha1
@@ -98,6 +109,8 @@ spec:
         - name: bouncer
           namespace: traefik
         - name: default-headers
+          namespace: traefik
+        - name: authentik-outpost
           namespace: traefik
         - name: rate-limit
           namespace: traefik

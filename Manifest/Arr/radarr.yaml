@@ -38,6 +38,18 @@ spec:
               readOnly: false
               name: smb-media
               subPath: Movies
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
           resources:
             requests:
               memory: "256Mi"

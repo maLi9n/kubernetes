@@ -18,19 +18,26 @@ spec:
         worker: "true"
       containers:
         - name: lidarr
-          image: lscr.io/linuxserver/lidarr:latest
+          image: linuxserver/lidarr
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8686
+              name: web
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: media-env
           volumeMounts:
             - mountPath: /config
               name: config
-            - mountPath: /downloads
+            - mountPath: "/music"
+              readOnly: false
               name: smb-temp
-            - mountPath: /music
+              subPath: music
+            - mountPath: "/Music"
+              readOnly: false
               name: smb-media
+              subPath: Music
           readinessProbe:
             httpGet:
               path: /
@@ -54,23 +61,27 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: lidarr-config
-        - name: pv-arr-temp
+        - name: smb-temp
           persistentVolumeClaim:
-            claimName: pv-arr-temp
-        - name: pv-arr-media
+            claimName: pvc-arr-temp
+        - name: smb-media
           persistentVolumeClaim:
-            claimName: pv-arr-media
+            claimName: pvc-arr-media
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
+    app: lidarr
   name: lidarr
   namespace: media
 spec:
   selector:
     app: lidarr
   ports:
-    - port: 8686
+    - name: web-tcp
+      port: 8686
+      protocol: TCP
       targetPort: 8686
 ---
 apiVersion: traefik.io/v1alpha1
@@ -98,6 +109,8 @@ spec:
         - name: bouncer
           namespace: traefik
         - name: default-headers
+          namespace: traefik
+        - name: authentik-outpost
           namespace: traefik
         - name: rate-limit
           namespace: traefik
