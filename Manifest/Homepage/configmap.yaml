@@ -318,15 +318,13 @@ data:
     - search:
         provider: google
         target: _blank
-    - weatherapi:
+    - openmeteo:
         label: San Antonio # optional
         latitude: 29.42
         longitude: -98.49
+        timezone: America/Chicago
         units: imperial # or metric
-        apiKey: c2ce02800d6a4d37a4d195424243005
         cache: 5 # Time in minutes to cache API responses, to stay within limits
-        format: # optional, Intl.NumberFormat options
-          maximumFractionDigits: 1
     - kubernetes:
         cluster:
           show: true
@@ -345,4 +343,3 @@ data:
         cpu: true
         memory: true
         network: default
-  docker.yaml: ""
