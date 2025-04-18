@@ -106,8 +106,6 @@ spec:
         - name: lidarr
           port: 8686
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: authentik-outpost

@@ -40,8 +40,6 @@ spec:
         - name: mattermost
           port: 8065
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit

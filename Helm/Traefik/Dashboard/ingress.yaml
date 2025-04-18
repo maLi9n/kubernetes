@@ -12,9 +12,8 @@ spec:
     - match: Host(`traefik.cybertronlabs.us`) # change this to your domain
       kind: Rule
       middlewares:
-        - name: bouncer
         - name: default-headers
-        #- name: authentik-outpost
+        - name: authentik-outpost
         - name: rate-limit
           #- name: traefik-dashboard-basicauth
           namespace: traefik

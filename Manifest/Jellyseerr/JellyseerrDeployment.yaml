@@ -88,9 +88,8 @@ spec:
         - name: jellyseerr
           port: 5055
       middlewares:
-        - name: bouncer
-          namespace: traefik
-        #       - name: authentik-outpost
+        #- name: authentik-outpost
+        #  namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit

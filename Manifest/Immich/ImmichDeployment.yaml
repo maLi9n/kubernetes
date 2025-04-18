@@ -41,8 +41,6 @@ spec:
         - name: immich
           port: 2283
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit

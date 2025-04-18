@@ -40,8 +40,6 @@ spec:
         - name: kuma
           port: 32768
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: authentik-outpost

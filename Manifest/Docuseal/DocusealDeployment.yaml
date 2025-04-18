@@ -41,8 +41,6 @@ spec:
         - name: docuseal
           port: 3001
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit

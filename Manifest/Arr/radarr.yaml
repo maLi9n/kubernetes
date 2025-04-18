@@ -41,13 +41,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 8080
+              port: 7878
             initialDelaySeconds: 10
             periodSeconds: 15
           livenessProbe:
             httpGet:
               path: /
-              port: 8080
+              port: 7878
             initialDelaySeconds: 30
             periodSeconds: 30
           resources:
@@ -106,8 +106,6 @@ spec:
         - name: radarr
           port: 7878
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: authentik-outpost

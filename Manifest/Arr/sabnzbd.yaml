@@ -97,8 +97,6 @@ spec:
         - name: sabnzbd
           port: 8080
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: authentik-outpost

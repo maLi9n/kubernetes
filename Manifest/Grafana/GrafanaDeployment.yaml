@@ -40,7 +40,6 @@ spec:
         - name: grafana
           port: 3000
       middlewares:
-        #       - name: bouncer
         - name: default-headers
           namespace: traefik
         - name: rate-limit

@@ -102,8 +102,6 @@ spec:
         - name: codeserver
           port: 8443
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit

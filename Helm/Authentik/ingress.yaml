@@ -21,8 +21,6 @@ spec:
         - name: authentik-service
           port: 9000
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
 #  tls:

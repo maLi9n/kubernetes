@@ -110,8 +110,6 @@ spec:
         - name: jellyfin
           port: 8096
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: rate-limit

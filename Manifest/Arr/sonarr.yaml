@@ -106,8 +106,6 @@ spec:
         - name: sonarr
           port: 8989
       middlewares:
-        - name: bouncer
-          namespace: traefik
         - name: default-headers
           namespace: traefik
         - name: authentik-outpost
