@@ -38,25 +38,25 @@ spec:
               readOnly: false
               name: smb-media
               subPath: Music
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8686
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8686
-            initialDelaySeconds: 30
-            periodSeconds: 30
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "100m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
+      #          readinessProbe:
+      #            httpGet:
+      #              path: /
+      #              port: 8686
+      #            initialDelaySeconds: 10
+      #            periodSeconds: 15
+      #          livenessProbe:
+      #            httpGet:
+      #              path: /
+      #              port: 8686
+      #            initialDelaySeconds: 30
+      #            periodSeconds: 30
+      #          resources:
+      #            requests:
+      #              memory: "256Mi"
+      #              cpu: "250m"
+      #            limits:
+      #              memory: "512Mi"
+      #              cpu: "500m"
       volumes:
         - name: config
           persistentVolumeClaim:
