@@ -24,32 +24,20 @@ spec:
       labels:
         app: homepage
     spec:
-<<<<<<< HEAD
-=======
       securityContext:
         runAsUser: 1000
         runAdGroup: 1000
->>>>>>> a22781b (secured homepage)
       nodeSelector:
         worker: "true"
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
       containers:
         - image: ghcr.io/gethomepage/homepage:v0.10.9
           imagePullPolicy: IfNotPresent
           name: homepage
           securityContext:
             allowPrivilegeEscalation: false
-<<<<<<< HEAD
-            runAsNonRoot: false
-            seccompProfile:
-              type: "RuntimeDefault"
-=======
             runAdNonRoot: true
             seccompProfile:
               type: "RuntimeProfile"
->>>>>>> a22781b (secured homepage)
             capabilities:
               drop:
                 - ALL
