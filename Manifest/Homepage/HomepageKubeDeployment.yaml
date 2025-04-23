@@ -24,6 +24,12 @@ spec:
       labels:
         app: homepage
     spec:
+<<<<<<< HEAD
+=======
+      securityContext:
+        runAsUser: 1000
+        runAdGroup: 1000
+>>>>>>> a22781b (secured homepage)
       nodeSelector:
         worker: "true"
       securityContext:
@@ -35,9 +41,15 @@ spec:
           name: homepage
           securityContext:
             allowPrivilegeEscalation: false
+<<<<<<< HEAD
             runAsNonRoot: false
             seccompProfile:
               type: "RuntimeDefault"
+=======
+            runAdNonRoot: true
+            seccompProfile:
+              type: "RuntimeProfile"
+>>>>>>> a22781b (secured homepage)
             capabilities:
               drop:
                 - ALL
