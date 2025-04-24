@@ -25,7 +25,7 @@ spec:
             - name: TZ
               value: "America/Chicago"
           image: ghcr.io/fallenbagel/jellyseerr:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: jellyseerr
           ports:
             - containerPort: 5055
@@ -62,7 +62,7 @@ spec:
   selector:
     app: jellyseerr
   #  externalTrafficPolicy: Cluster
-  #  loadBalancerIP: 192.168.40.63
+  #  loadBalancerIP: 192.168.40.64
   type: ClusterIP #LoadBalancer
 
 ---
