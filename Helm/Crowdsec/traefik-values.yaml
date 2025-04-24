@@ -19,7 +19,7 @@ deployment:
   initContainers: []
 
 nodeSelector:
-  crowdsec: "true" # add these labels to your worker nodes before running - see video
+  worker: "true" # add these labels to your worker nodes before running - see video
 
 ports:
   web:

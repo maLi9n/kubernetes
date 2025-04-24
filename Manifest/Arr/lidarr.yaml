@@ -19,7 +19,7 @@ spec:
       containers:
         - name: lidarr
           image: linuxserver/lidarr
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8686
               name: web
@@ -42,21 +42,20 @@ spec:
       #            httpGet:
       #              path: /
       #              port: 8686
-      #            initialDelaySeconds: 10
-      #            periodSeconds: 15
+      #            initialDelaySeconds: 30
+      #            periodSeconds: 30
       #          livenessProbe:
       #            httpGet:
       #              path: /
       #              port: 8686
-      #            initialDelaySeconds: 30
-      #            periodSeconds: 30
+      #            initialDelaySeconds: 60
+      #            periodSeconds: 60
+      #            timeoutSeconds: 10
+      #            failureThreshold: 6
       #          resources:
       #            requests:
       #              memory: "256Mi"
       #              cpu: "250m"
-      #            limits:
-      #              memory: "512Mi"
-      #              cpu: "500m"
       volumes:
         - name: config
           persistentVolumeClaim:

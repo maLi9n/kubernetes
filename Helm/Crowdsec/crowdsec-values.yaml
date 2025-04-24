@@ -87,7 +87,7 @@ agent:
     #- name: DISABLE_PARSERS
     #  value: "crowdsecurity/whitelists"
   nodeSelector:
-    crowdsec: "true"
+    worker: "true"
 
 lapi:
   dashboard:
@@ -106,4 +106,4 @@ lapi:
     - name: ENROLL_TAGS
       value: "homelab"
   nodeSelector:
-    crowdsec: "true"
+    worker: "true"
