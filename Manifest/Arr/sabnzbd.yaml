@@ -19,7 +19,7 @@ spec:
       containers:
         - name: sabnzbd
           image: linuxserver/sabnzbd
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
               name: web

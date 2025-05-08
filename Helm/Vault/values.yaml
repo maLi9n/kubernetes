@@ -1,0 +1,24 @@
+server:
+  ha:
+    enabled: false
+
+  dataStorage:
+    enabled: true
+    size: 10Gi
+    storageClass: longhorn # or another StorageClass supported in your k3s cluster
+
+  standalone:
+    enabled: true # For now, standalone, not HA
+
+  affinity: {}
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+  ingress:
+    enabled: true # Set true if you want to expose via Traefik/Ingress
+
+ui:
+  enabled: true
