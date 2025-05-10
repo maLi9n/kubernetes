@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: exportarr-sonarr
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: exportarr-sonarr
+    app.kubernetes.io/instance: exportarr-sonarr
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: exportarr-sonarr
+    app.kubernetes.io/instance: exportarr-sonarr
+  ports:
+    - name: monitoring
+      port: 9707
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: exportarr-sonarr
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: exportarr-sonarr
+    app.kubernetes.io/instance: exportarr-sonarr
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: exportarr-sonarr
+      app.kubernetes.io/instance: exportarr-sonarr
+  endpoints:
+    - port: monitoring
+      interval: 4m
+      scrapeTimeout: 90s
+      path: /metrics
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exportarr-sonarr
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exportarr-sonarr
+  template:
+    metadata:
+      labels:
+        app: exportarr-sonarr
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "monitoring"
+    spec:
+      serviceAccountName: default
+      automountServiceAccountToken: true
+      containers:
+        - name: exportarr
+          image: ghcr.io/onedr0p/exportarr:latest
+          imagePullPolicy: IfNotPresent
+          args: ["sonarr"]
+          env:
+            - name: PORT
+              value: "9707"
+            - name: URL
+              value: "http://sonarr.media.svc.cluster.local:8989"
+            - name: APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: exportarr-secret
+                  key: sonarr_api_key
+          ports:
+            - name: monitoring
+              containerPort: 9707
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: monitoring
+            failureThreshold: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: monitoring
+            failureThreshold: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

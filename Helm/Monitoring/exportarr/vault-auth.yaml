@@ -1,0 +1,11 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: static-auth
+  namespace: monitoring
+spec:
+  method: appRole
+  mount: approle
+  appRole:
+    roleId: "8b037059-92b2-b2ca-5662-1d2c5d3a554a"
+    secretRef: "approle-secret"

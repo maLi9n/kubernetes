@@ -1,0 +1,28 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus-gafana
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`www.graf.cybertronlabs.us`) # change to your domain
+      kind: Rule
+      services:
+        - name: prometheus-grafana
+          port: 80
+    - match: Host(`graf.cybertronlabs.us`) # change this to your domain
+      kind: Rule
+      services:
+        - name: prometheus-grafana
+          port: 80
+      middlewares:
+        - name: default-headers
+          namespace: traefik
+        - name: authentik-outpost
+          namespace: traefik
+        - name: rate-limit
+          namespace: traefik

@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: exportarr-sabnzbd
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: exportarr-sabnzbd
+    app.kubernetes.io/instance: exportarr-sabnzbd
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: exportarr-sabnzbd
+    app.kubernetes.io/instance: exportarr-sabnzbd
+  ports:
+    - name: monitoring
+      port: 9707
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: exportarr-sabnzbd
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: exportarr-sabnzbd
+    app.kubernetes.io/instance: exportarr-sabnzbd
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: exportarr-sabnzbd
+      app.kubernetes.io/instance: exportarr-sabnzbd
+  endpoints:
+    - port: monitoring
+      interval: 4m
+      scrapeTimeout: 90s
+      path: /metrics
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exportarr-sabnzbd
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exportarr-sabnzbd
+  template:
+    metadata:
+      labels:
+        app: exportarr-sabnzbd
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "monitoring"
+    spec:
+      serviceAccountName: default
+      automountServiceAccountToken: true
+      containers:
+        - name: exportarr
+          image: ghcr.io/onedr0p/exportarr:latest
+          imagePullPolicy: IfNotPresent
+          args: ["sabnzbd"]
+          env:
+            - name: PORT
+              value: "9707"
+            - name: URL
+              value: "http://sabnzbd.media.svc.cluster.local:8080"
+            - name: APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: exportarr-secret
+                  key: sabnzbd_api_key
+          ports:
+            - name: monitoring
+              containerPort: 9707
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: monitoring
+            failureThreshold: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: monitoring
+            failureThreshold: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
