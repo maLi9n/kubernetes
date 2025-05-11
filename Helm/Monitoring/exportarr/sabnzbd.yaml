@@ -25,6 +25,7 @@ metadata:
   labels:
     app.kubernetes.io/name: exportarr-sabnzbd
     app.kubernetes.io/instance: exportarr-sabnzbd
+    release: prometheus
 spec:
   selector:
     matchLabels:
@@ -46,11 +47,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: exportarr-sabnzbd
+      app.kubernetes.io/name: exportarr-sabnzbd
+      app.kubernetes.io/instance: exportarr-sabnzbd
   template:
     metadata:
       labels:
-        app: exportarr-sabnzbd
+        app.kubernetes.io/name: exportarr-sabnzbd
+        app.kubernetes.io/instance: exportarr-sabnzbd
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "monitoring"

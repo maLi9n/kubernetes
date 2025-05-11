@@ -14,7 +14,7 @@ spec:
     app.kubernetes.io/instance: exportarr-lidarr
   ports:
     - name: monitoring
-      port: 9707
+      port: 9706
 
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -25,6 +25,7 @@ metadata:
   labels:
     app.kubernetes.io/name: exportarr-lidarr
     app.kubernetes.io/instance: exportarr-lidarr
+    release: prometheus
 spec:
   selector:
     matchLabels:
@@ -46,11 +47,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: exportarr-lidarr
+      app.kubernetes.io/name: exportarr-lidarr
+      app.kubernetes.io/instance: exportarr-lidarr
   template:
     metadata:
       labels:
-        app: exportarr-lidarr
+        app.kubernetes.io/name: exportarr-lidarr
+        app.kubernetes.io/instance: exportarr-lidarr
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "monitoring"
@@ -64,7 +67,7 @@ spec:
           args: ["lidarr"]
           env:
             - name: PORT
-              value: "9707"
+              value: "9706"
             - name: URL
               value: "http://lidarr.media.svc.cluster.local:8686"
             - name: APIKEY
@@ -74,7 +77,7 @@ spec:
                   key: lidarr_api_key
           ports:
             - name: monitoring
-              containerPort: 9707
+              containerPort: 9706
           livenessProbe:
             httpGet:
               path: /healthz

@@ -14,7 +14,7 @@ spec:
     app.kubernetes.io/instance: exportarr-sonarr
   ports:
     - name: monitoring
-      port: 9707
+      port: 9708
 
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -25,6 +25,7 @@ metadata:
   labels:
     app.kubernetes.io/name: exportarr-sonarr
     app.kubernetes.io/instance: exportarr-sonarr
+    release: prometheus
 spec:
   selector:
     matchLabels:
@@ -46,11 +47,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: exportarr-sonarr
+      app.kubernetes.io/name: exportarr-sonarr
+      app.kubernetes.io/instance: exportarr-sonarr
   template:
     metadata:
       labels:
-        app: exportarr-sonarr
+        app.kubernetes.io/name: exportarr-sonarr
+        app.kubernetes.io/instance: exportarr-sonarr
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "monitoring"
@@ -64,7 +67,7 @@ spec:
           args: ["sonarr"]
           env:
             - name: PORT
-              value: "9707"
+              value: "9708"
             - name: URL
               value: "http://sonarr.media.svc.cluster.local:8989"
             - name: APIKEY
@@ -74,7 +77,7 @@ spec:
                   key: sonarr_api_key
           ports:
             - name: monitoring
-              containerPort: 9707
+              containerPort: 9708
           livenessProbe:
             httpGet:
               path: /healthz

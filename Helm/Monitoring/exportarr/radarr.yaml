@@ -14,7 +14,7 @@ spec:
     app.kubernetes.io/instance: exportarr-radarr
   ports:
     - name: monitoring
-      port: 9707
+      port: 9709
 
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -25,6 +25,7 @@ metadata:
   labels:
     app.kubernetes.io/name: exportarr-radarr
     app.kubernetes.io/instance: exportarr-radarr
+    release: prometheus
 spec:
   selector:
     matchLabels:
@@ -46,11 +47,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: exportarr-radarr
+      app.kubernetes.io/name: exportarr-radarr
+      app.kubernetes.io/instance: exportarr-radarr
   template:
     metadata:
       labels:
-        app: exportarr-radarr
+        app.kubernetes.io/name: exportarr-radarr
+        app.kubernetes.io/instance: exportarr-radarr
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "monitoring"
@@ -64,7 +67,7 @@ spec:
           args: ["radarr"]
           env:
             - name: PORT
-              value: "9707"
+              value: "9709"
             - name: URL
               value: "http://radarr.media.svc.cluster.local:7878"
             - name: APIKEY
@@ -74,7 +77,7 @@ spec:
                   key: radarr_api_key
           ports:
             - name: monitoring
-              containerPort: 9707
+              containerPort: 9709
           livenessProbe:
             httpGet:
               path: /healthz
