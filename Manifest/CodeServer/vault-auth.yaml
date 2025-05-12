@@ -8,6 +8,4 @@ spec:
   mount: kubernetes
   kubernetes:
     role: codeserver
-    serviceAccount: default
-    audiences:
-      - https://kubernetes.default.svc
+    serviceAccount: csa1

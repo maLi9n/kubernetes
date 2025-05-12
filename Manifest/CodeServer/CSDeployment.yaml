@@ -1,10 +1,3 @@
-#---
-#apiVersion: v1
-#kind: Namespace
-#metadata:
-#  name: codeserver
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,20 +14,39 @@ spec:
       app: codeserver
   template:
     metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/role: "codeserver"
+        vault.hashicorp.com/agent-inject-secret-env: "kv-v2/data/codeserver/secret"
+        vault.hashicorp.com/agent-inject-template-env: |
+          {{- with secret "kv-v2/data/codeserver/secret" -}}
+          bind-addr: 0.0.0.0:8080
+          auth: password
+          password: {{ .Data.data.PASSWORD }}
+          cert: false
+          {{- end }}
+        vault.hashicorp.com/agent-inject-file-env: "config.yaml"
       labels:
         app: codeserver
     spec:
-      serviceAccountName: default
+      serviceAccountName: csa1
       nodeSelector:
         worker: "true"
       containers:
         - name: codeserver
-          image: lscr.io/linuxserver/code-server:latest
+          image: codercom/code-server:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8443
+            - containerPort: 8080
               name: https
               protocol: TCP
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p /home/coder/.config/code-server
+              cp /vault/secrets/config.yaml /home/coder/.config/code-server/config.yaml
+              exec /usr/bin/code-server
           env:
             - name: TZ
               value: "America/Chicago"
@@ -42,21 +54,6 @@ spec:
               value: "1000"
             - name: PGID
               value: "1000"
-            - name: PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: secret #codeserver-secret
-                  key: PASSWORD
-            - name: SUDO_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: secret #codeserver-secret
-                  key: SUDO_PASSWORD
-            - name: PROXY_DOMAIN
-              valueFrom:
-                secretKeyRef:
-                  name: secret #codeserver-secret
-                  key: PROXY_DOMAIN
           volumeMounts:
             - name: codeserver
               mountPath: /config
@@ -64,6 +61,25 @@ spec:
         - name: codeserver
           persistentVolumeClaim:
             claimName: codeserver
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csa1
+  namespace: codeserver
+secrets:
+  - name: csa1-token
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: csa1-token
+  namespace: codeserver
+  annotations:
+    kubernetes.io/service-account.name: csa1
+type: kubernetes.io/service-account-token
 
 ---
 apiVersion: v1
@@ -75,8 +91,8 @@ spec:
   selector:
     app: codeserver
   ports:
-    - port: 8443
-      targetPort: 8443
+    - port: 8080
+      targetPort: 8080
       protocol: TCP
   type: ClusterIP
 
@@ -96,12 +112,12 @@ spec:
       kind: Rule
       services:
         - name: codeserver
-          port: 8443
+          port: 8080
     - match: Host(`cs.cybertronlabs.us`)
       kind: Rule
       services:
         - name: codeserver
-          port: 8443
+          port: 8080
       middlewares:
         - name: default-headers
           namespace: traefik
