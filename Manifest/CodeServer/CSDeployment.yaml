@@ -56,7 +56,7 @@ spec:
               value: "1000"
           volumeMounts:
             - name: codeserver
-              mountPath: /config
+              mountPath: /home/code
       volumes:
         - name: codeserver
           persistentVolumeClaim:

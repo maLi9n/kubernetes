@@ -1,10 +1,3 @@
-#---
-#apiVersion: v1
-#kind: Namespace
-#metadata:
-#  name: codeserver
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,18 +14,6 @@ spec:
       app: codeserver
   template:
     metadata:
-      annotations:
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/agent-inject-status: "update"
-        vault.hashicorp.com/role: "codeserver"
-        vault.hashicorp.com/agent-inject-secret-env: "kv-v2/data/codeserver/secret"
-        vault.hashicorp.com/agent-inject-template-env: |
-          {{- with secret "kv-v2/data/codeserver/secret" -}}
-          password={{ .Data.data.PASSWORD }}
-          sudo_password={{ .Data.data.SUDO_PASSWORD }}
-          proxy_domain={{ .Data.data.PROXY_DOMAIN }}
-          {{- end }}
-        vault.hashicorp.com/agent-inject-file-env: "/home/coder/.config/code-server/config.yaml"
       labels:
         app: codeserver
     spec:
@@ -41,10 +22,10 @@ spec:
         worker: "true"
       containers:
         - name: codeserver
-          image: codercom/code-server:latest
+          image: lscr.io/linuxserver/code-server:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8443
               name: https
               protocol: TCP
           env:
@@ -54,113 +35,28 @@ spec:
               value: "1000"
             - name: PGID
               value: "1000"
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: PASSWORD
+            - name: SUDO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: SUDO_PASSWORD
+            - name: PROXY_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: secret 
+                  key: PROXY_DOMAIN
           volumeMounts:
             - name: codeserver
-              mountPath: /config
-            - name: vault-secrets
-              mountPath: /home/coder/.config/code-server/
-              readOnly: true
+              mountPath: /config 
       volumes:
         - name: codeserver
           persistentVolumeClaim:
             claimName: codeserver
-        - name: vault-secrets
-          emptyDir: {}
-
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  labels:
-#    app: codeserver
-#    app.kubernetes.io/instance: codeserver
-#    app.kubernetes.io/name: codeserver
-#  name: codeserver
-#  namespace: codeserver
-#spec:
-#  replicas: 1
-#  selector:
-#    matchLabels:
-#      app: codeserver
-#  template:
-#    metadata:
-#      annotations:
-#        vault.hashicorp.com/agent-inject: "true"
-#        vault.hashicorp.com/agent-inject-status: "update"
-#        vault.hashicorp.com/role: "codeserver"
-#        vault.hashicorp.com/agent-inject-secret-env: "kv-v2/data/codeserver/secret"
-#        vault.hashicorp.com/agent-inject-template-env: |
-#          {{- with secret "kv-v2/data/codeserver/secret" -}}
-#          export PASSWORD={{ .Data.data.PASSWORD }}
-#          export SUDO_PASSWORD={{ .Data.data.SUDO_PASSWORD }}
-#          export PROXY_DOMAIN={{ .Data.data.PROXY_DOMAIN }}
-#          {{- end }}
-#        vault.hashicorp.com/agent-inject-file-env: "/config/environment.d/codeserver.env"
-#      labels:
-#        app: codeserver
-#    spec:
-#      serviceAccountName: csa1
-#      nodeSelector:
-#        worker: "true"
-#      initContainers:
-#        - name: create-directory
-#          image: busybox
-#          command: ["sh", "-c", "mkdir -p /config/environment.d"]
-#          volumeMounts:
-#            - name: codeserver
-#              mountPath: /config
-#      containers:
-#        - name: codeserver
-#          image: lscr.io/linuxserver/code-server:latest
-#          imagePullPolicy: Always
-#          ports:
-#            - containerPort: 8443
-#              name: https
-#              protocol: TCP
-#          command: ["/bin/sh", "-c"]
-#          args:
-#            - |
-#              while [ ! -f /config/environment.d/codeserver.env ]; do
-#                echo "Waiting for Vault Agent to inject secrets..."
-#                sleep 1
-#              done
-#              echo "Secrets injected. Appending to /etc/environment..."
-#              cat /config/environment.d/codeserver.env >> /etc/environment
-#              exec /init
-#          env:
-#            - name: TZ
-#              value: "America/Chicago"
-#            - name: PUID
-#              value: "1000"
-#            - name: PGID
-#              value: "1000"
-#          #            - name: PASSWORD
-#          #              valueFrom:
-#          #                secretKeyRef:
-#          #                  name: secret #codeserver-secret
-#          #                  key: PASSWORD
-#          #            - name: SUDO_PASSWORD
-#          #              valueFrom:
-#          #                secretKeyRef:
-#          #                  name: secret #codeserver-secret
-#          #                  key: SUDO_PASSWORD
-#          #            - name: PROXY_DOMAIN
-#          #              valueFrom:
-#          #                secretKeyRef:
-#          #                  name: secret #codeserver-secret
-#          #                  key: PROXY_DOMAIN
-#          volumeMounts:
-#            - name: codeserver
-#              mountPath: /config/persistent # Mount persistent volume here
-#            - name: vault-secrets
-#              mountPath: /config/environment.d/ # Mount Vault secrets here
-#              readOnly: true
-#      volumes:
-#        - name: codeserver
-#          persistentVolumeClaim:
-#            claimName: codeserver
-#        - name: vault-secrets
-#          emptyDir: {}
 
 ---
 apiVersion: v1
@@ -191,8 +87,8 @@ spec:
   selector:
     app: codeserver
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 8443
+      targetPort: 8443
       protocol: TCP
   type: ClusterIP
 
@@ -212,12 +108,12 @@ spec:
       kind: Rule
       services:
         - name: codeserver
-          port: 8080
+          port: 8443
     - match: Host(`cs.cybertronlabs.us`)
       kind: Rule
       services:
         - name: codeserver
-          port: 8080
+          port: 8443
       middlewares:
         - name: default-headers
           namespace: traefik
