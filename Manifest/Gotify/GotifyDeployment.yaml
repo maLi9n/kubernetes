@@ -27,6 +27,13 @@ spec:
           image: ghcr.io/gotify/server # Replace with desired image tag
           ports:
             - containerPort: 80 # Gotify's default port
+          volumeMounts:
+            - mountPath: /data
+              name: gotify-data
+      volumes:
+        - name: gotify-data
+          persistentVolumeClaim:
+            claimName: gotify-data
 
 ---
 apiVersion: v1
