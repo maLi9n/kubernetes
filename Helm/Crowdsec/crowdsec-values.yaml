@@ -57,7 +57,7 @@ config:
       method: POST
 
       headers:
-        X-Gotify-Key: AQLGEZIMCvl7.N2
+        X-Gotify-Key: Ahs25mtDZqB-gVG
         Content-Type: application/json
         skip_tls_verification: true
 tls:

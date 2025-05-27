@@ -28,7 +28,7 @@ spec:
           ports:
             - containerPort: 80 # Gotify's default port
           volumeMounts:
-            - mountPath: /data
+            - mountPath: /app/data
               name: gotify-data
       volumes:
         - name: gotify-data
