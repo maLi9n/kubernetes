@@ -13,7 +13,7 @@ spec:
         app: fail2ban
     spec:
       nodeSelector:
-        kubernetes.io/hostname: k3s-worker-2
+        kubernetes.io/hostname: k3s-worker-1
       containers:
         - name: fail2ban
           image: crazymax/fail2ban:latest
@@ -37,5 +37,5 @@ spec:
             name: fail2ban-config
         - name: jellyfin-logs
           hostPath:
-            path: /var/lib/kubelet/pods/99771b08-5367-4bb7-8d16-95f5f2149816/volumes/kubernetes.io~csi/jellyfin/mount/config
+            path: /var/lib/kubelet/pods/56b9f679-ef7e-425b-89e8-918700a96a0a/volumes/kubernetes.io~csi/jellyfin/mount/config
             type: Directory
